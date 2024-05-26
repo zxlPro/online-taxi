@@ -3,6 +3,7 @@ package com.zxl.internalcommon.responese;
 import com.zxl.internalcommon.constant.StatusCodeEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.util.StringUtils;
 
 /**
  * @className ResponseResult
@@ -20,6 +21,18 @@ public class ResponseResult <T>{
     private String message;
 
     private T data;
+
+    /**
+     * @description 成功返回
+     * @params
+     * @return com.zxl.internalcommon.responese.ResponseResult
+     * @author zxl
+     * @date 2024/5/1 00:02
+     */
+    public static <T> ResponseResult success(){
+        return new ResponseResult().setCode(StatusCodeEnum.SUCCESS.getCode())
+                .setMessage(StatusCodeEnum.SUCCESS.getValue()).setData("");
+    }
 
     /**
      * @description 返回成功

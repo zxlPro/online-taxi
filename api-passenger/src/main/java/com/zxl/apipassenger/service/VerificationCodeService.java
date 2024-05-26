@@ -5,7 +5,10 @@ import com.zxl.apipassenger.remote.ServiceVerificationCodeClient;
 import com.zxl.internalcommon.responese.NumberCodeResponse;
 import com.zxl.internalcommon.responese.ResponseResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @description 获取验证码service
@@ -17,7 +20,11 @@ public class VerificationCodeService {
     @Autowired
     private ServiceVerificationCodeClient serviceVerificationCodeClient;
 
-     /**
+    private String verificationCodePrefix = "PASSENGER_VERIFICATION_CODE_";
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    /**
       * @description TODO
       * @params passengerPhone
       * @return java.lang.String
@@ -31,12 +38,11 @@ public class VerificationCodeService {
         int numberCode = numberResp.getData().getNumberCode();
         System.out.println("获取验证码服务返回验证码为："+numberCode);
         //存入redis
-        System.out.println("存入redis");
+        String key = verificationCodePrefix+passengerPhone;
+        stringRedisTemplate.opsForValue().set(key,String.valueOf(numberCode),2, TimeUnit.MINUTES);
+        //通过短信发送验证码
 
-        //返回响应值
-        JSONObject respJson = new JSONObject();
-        respJson.put("data","123456");
-        return ResponseResult.success(respJson);
+        return ResponseResult.success();
 
     }
 }
